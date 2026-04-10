@@ -1,0 +1,17 @@
+{
+  "name": "vendor-compliance-packet-builder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-packet": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.85.0",
+    "cheerio": "^1.2.0",
+    "node-fetch": "^2.7.0"
+  }
+}

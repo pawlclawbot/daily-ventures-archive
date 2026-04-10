@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Submit Vendor URL</title>
+  <style>
+    body { margin:0; font-family: Arial, sans-serif; background:#f5f1e8; color:#1f1a17; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 56px 24px; }
+    h1 { font-family: Georgia, serif; font-size: 52px; line-height: 1; margin: 0 0 16px; }
+    p { color:#51463d; font-size:18px; line-height:1.6; }
+    form { margin-top: 28px; background:#fff; border:1px solid #d8cec0; border-radius:24px; padding:24px; }
+    label { display:block; font-size:12px; text-transform:uppercase; letter-spacing:.18em; color:#8a6b4a; margin-bottom:8px; }
+    input { width:100%; padding:14px 16px; border-radius:14px; border:1px solid #d8cec0; font-size:16px; margin-bottom:16px; }
+    button { background:#1f1a17; color:#f5f1e8; border:none; border-radius:999px; padding:14px 20px; font-weight:700; cursor:pointer; }
+    .status { margin-top:16px; font-size:14px; color:#51463d; white-space:pre-wrap; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Submit your vendor for review</h1>
+    <p>Enter your name, email, and vendor URL. We will generate the compliance packet and email it to you.</p>
+    <form id="packet-form">
+      <label for="name">Your name</label>
+      <input id="name" name="name" type="text" placeholder="Jane Smith" required />
+      <label for="email">Delivery email</label>
+      <input id="email" name="email" type="email" placeholder="you@company.com" required />
+      <label for="url">Vendor URL</label>
+      <input id="url" name="url" type="url" placeholder="https://vercel.com" required />
+      <button type="submit">Submit vendor</button>
+      <div class="status" id="status"></div>
+    </form>
+  </main>
+  <script>
+    const SUPABASE_URL = 'https://bpftdylvvijphyjagmax.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_flSdZ2KHdZwC9M12c0-rCA_vC3IoUmF';
+
+    document.getElementById('packet-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const status = document.getElementById('status');
+      status.textContent = 'Submitting...';
+      const payload = {
+        venture_slug: 'vendor-compliance-packet-builder',
+        customer_name: document.getElementById('name').value,
+        customer_email: document.getElementById('email').value,
+        vendor_url: document.getElementById('url').value,
+        status: 'pending'
+      };
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/submissions`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          status.textContent = JSON.stringify(data, null, 2);
+          return;
+        }
+        status.textContent = `Submission saved. ID: ${data[0].id}`;
+      } catch (err) {
+        status.textContent = 'Submission failed.';
+      }
+    });
+  </script>
+</body>
+</html>
